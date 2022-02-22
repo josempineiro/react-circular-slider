@@ -32,10 +32,10 @@ export const getMouseLocation = (evt, target) => {
 
 export const BASE_ROTATION = Math.PI / 2
 
-export const buildSegmentStyles = (segment) => ({
-  transform: `rotate(${segment.offsetAngle}rad)`,
-  clipPath: `polygon(${segment.clip.toString()})`,
-  borderColor: segment.color,
+export const buildSlideStyles = (slide) => ({
+  transform: `rotate(${slide.offsetAngle}rad)`,
+  clipPath: `polygon(${slide.clipPath.toString()})`,
+  borderColor: slide.color,
 })
 
 export const normalize = (deltaPercent) => {

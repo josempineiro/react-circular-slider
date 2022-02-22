@@ -1,57 +1,47 @@
 import React from 'react'
 import PropTypes from 'prop-types'
 import { useClassNames } from 'hooks'
-import {
-  fromPercentToAngle,
-  generateClipPathFromAngle,
-  buildNodeStyles,
-} from './utils'
+import { buildNodeStyles } from './utils'
 
 const CircularSliderNodes = ({
   globalOffset,
   radio,
-  segments,
-  selectedSegmentId,
+  slides,
+  selectedSlideId,
   onMouseEnter,
   onMouseLeave,
   onMouseDown,
 }) => {
-  const localSegments = segments.map((segment, index, vals) => ({
-    ...segment,
-    index,
-    clip: generateClipPathFromAngle(fromPercentToAngle(segment.value)),
-    arcAngle: fromPercentToAngle(segment.value),
-    offsetAngle: vals
-      .slice(0, index)
-      .reduce((angles, { value }) => angles + fromPercentToAngle(value), 0),
-  }))
+  const isSelectedSlide = (slide) => selectedSlideId === slide.id
 
-  const isSelectedSegment = (segment) => selectedSegmentId === segment.id
-
-  const visibleSegments = ({ value }) => value > 0
-  const { classNames } = useClassNames({ alias: 'SegmentsNodes' })
+  const isVisibleSlide = ({ value }) => value > 0
+  const { classNames } = useClassNames({ alias: 'SlidesNodes' })
   return (
     <div className={classNames()}>
       <div className={classNames('nodes')}>
-        {localSegments.filter(visibleSegments).map((segment) => (
+        {slides.filter(isVisibleSlide).map((slide) => (
           <div
-            key={segment.id}
+            key={slide.id}
             className={classNames('node', [
-              { color: segment.color },
-              { selected: isSelectedSegment(segment) },
+              { color: slide.color },
+              { selected: isSelectedSlide(slide) },
             ])}
-            onMouseEnter={() => onMouseEnter(segment.id)}
-            onMouseLeave={() => onMouseLeave(segment.id)}
-            onMouseDown={() => onMouseDown(segment.id)}
+            onMouseEnter={() => onMouseEnter(slide.id)}
+            onMouseLeave={() => onMouseLeave(slide.id)}
+            onMouseDown={(event) => {
+              event.stopPropagation()
+              onMouseDown(slide.id)
+            }}
+            onTouchStart={() => onMouseDown(slide.id)}
             style={buildNodeStyles(
-              segment.arcAngle + segment.offsetAngle + globalOffset,
+              slide.arcAngle + slide.offsetAngle + globalOffset,
               radio
             )}
           />
         ))}
       </div>
       <div className={classNames('nodesInfo')}>
-        {localSegments.filter(visibleSegments).map((option) => (
+        {slides.filter(isVisibleSlide).map((option) => (
           <div
             key={option.id}
             style={buildNodeStyles(
@@ -60,7 +50,7 @@ const CircularSliderNodes = ({
             )}
             className={classNames('nodeInfo')}
           >
-            {option.value}%
+            <span>{option.value}</span>
           </div>
         ))}
       </div>
@@ -69,12 +59,12 @@ const CircularSliderNodes = ({
 }
 
 CircularSliderNodes.propTypes = {
-  segments: PropTypes.array,
+  slides: PropTypes.array,
   onMouseEnter: PropTypes.func,
   onMouseLeave: PropTypes.func,
   onMouseDown: PropTypes.func,
   globalOffset: PropTypes.number,
-  selectedSegmentId: PropTypes.string,
+  selectedSlideId: PropTypes.string,
   radio: PropTypes.number,
 }
 

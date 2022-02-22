@@ -1,70 +1,43 @@
 import React, { useCallback } from 'react'
 import PropTypes from 'prop-types'
 import { useClassNames } from 'hooks'
-import SegmentsControls from './CircularSliderControls'
-import Segments from './CircularSlides'
+import CircularSlides from './CircularSlides'
 
 const CircularSlider = ({
   label,
-  segments,
+  dataset,
+  values,
   onChange,
   disabled,
   onFocus,
   onBlur,
-  className,
   invert,
   radio,
-  minSegment,
-  maxSegment,
+  minValue,
+  maxValue,
 }) => {
-  const { classNames } = useClassNames({ alias: 'SegmentsFieldset' })
-
-  const findSegmentById = (segments, id) =>
-    segments.find((segment) => id === segment.id)
+  const { classNames } = useClassNames({ alias: 'SlidesFieldset' })
 
   const handleChange = useCallback(
-    (newSegments) => {
-      const updatedSegments = segments.map((segment) => {
-        if (findSegmentById(newSegments, segment.id)) {
-          return findSegmentById(newSegments, segment.id)
-        }
-        return segment
-      })
-      onChange(updatedSegments.map(({ id, value }) => ({ id, value })))
+    (newSlideValues) => {
+      onChange(newSlideValues)
     },
-    [onChange, segments]
+    [onChange, dataset]
   )
 
-  const visibleSegments = segments.filter(({ value }) => value > 0)
-
   return (
-    <div
-      className={`${className || ''} ${classNames([
-        { invert },
-        { disabled },
-      ])}`.trim()}
-    >
-      <SegmentsControls
-        label={label}
-        invert={invert}
-        disabled={disabled}
-        segments={segments}
-        onChange={handleChange}
-        onFocus={onFocus}
-        onBlur={onBlur}
-        maxSegment={maxSegment}
-        minSegment={minSegment}
-      />
-      <Segments
+    <div className={classNames([{ disabled }])}>
+      <CircularSlides
         invert={invert}
         disabled={disabled}
         radio={radio}
-        segments={visibleSegments}
+        dataset={dataset}
+        values={values}
         onFocus={onFocus}
         onBlur={onBlur}
         onChange={handleChange}
-        maxSegment={maxSegment}
-        minSegment={minSegment}
+        maxValue={maxValue}
+        minValue={minValue}
       />
     </div>
   )
@@ -73,15 +46,15 @@ const CircularSlider = ({
 CircularSlider.propTypes = {
   label: PropTypes.node,
   disabled: PropTypes.bool,
-  segments: PropTypes.array,
+  dataset: PropTypes.array,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
   onBlur: PropTypes.func,
   className: PropTypes.string,
   radio: PropTypes.number,
   invert: PropTypes.bool,
-  minSegment: PropTypes.number,
-  maxSegment: PropTypes.number,
+  minValue: PropTypes.number,
+  maxValue: PropTypes.number,
 }
 
 CircularSlider.defaultProps = {

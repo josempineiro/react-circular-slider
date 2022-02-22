@@ -8,7 +8,7 @@ import {
   normaliseAngle,
   getMouseLocation,
   generateClipPathFromAngle,
-  buildSegmentStyles,
+  buildSlideStyles,
   normalize,
   BASE_ROTATION,
 } from './utils'
@@ -17,165 +17,175 @@ const CircularSlides = ({
   onChange,
   onFocus,
   onBlur,
-  segments,
-  minSegment,
-  maxSegment,
+  dataset,
+  values,
+  minValue,
+  maxValue,
   disabled,
   radio,
   invert,
 }) => {
-  const segmentsRef = useRef()
+  const slidesRef = useRef()
   const [globalOffset, setGlobalOffset] = useState(0)
-  const [hoverSegmentId, setHoverSegmentId] = useState(null)
-  const [selectedSegmentId, setSelectedSegmentId] = useState(null)
+  const [hoverSlideId, setHoverSlideId] = useState(null)
+  const [selectedSlideId, setSelectedSlideId] = useState(null)
 
-  const localSegments = segments.map((segment, index, vals) => ({
-    ...segment,
-    index,
-    clip: generateClipPathFromAngle(fromPercentToAngle(segment.value)),
-    arcAngle: fromPercentToAngle(segment.value),
-    offsetAngle: vals
-      .slice(0, index)
-      .reduce((angles, { value }) => angles + fromPercentToAngle(value), 0),
-  }))
+  const findSlideValue = (slide) =>
+    values.find(({ id }) => id === slide.id).value
 
-  const visibleSegments = localSegments.filter(({ value }) => value > 0)
+  const localSlides = dataset.map((data, index, slides) => {
+    const slideValue = findSlideValue(data)
+    return {
+      ...data,
+      index,
+      value: slideValue,
+      clipPath: generateClipPathFromAngle(fromPercentToAngle(slideValue)),
+      arcAngle: fromPercentToAngle(slideValue),
+      offsetAngle: slides
+        .slice(0, index)
+        .reduce(
+          (angles, slide) => angles + fromPercentToAngle(findSlideValue(slide)),
+          0
+        ),
+    }
+  })
 
-  const getSegmentById = (segmentId) =>
-    localSegments.find(({ id }) => id === segmentId)
+  const visibleSlides = localSlides.filter(({ value }) => value > 0)
 
-  const selectedSegment = (() => {
-    if (selectedSegmentId) {
-      return getSegmentById(selectedSegmentId)
-    } else if (hoverSegmentId) {
-      return getSegmentById(hoverSegmentId)
+  const getSlideById = (slideId) => localSlides.find(({ id }) => id === slideId)
+
+  const selectedSlide = (() => {
+    if (selectedSlideId) {
+      return getSlideById(selectedSlideId)
+    } else if (hoverSlideId) {
+      return getSlideById(hoverSlideId)
     }
     return null
   })()
 
-  const localMaxSegment = (() => {
-    const minSegmentSum = minSegment * (segments.length - 1)
-    const maxAcceptedSegment = maxSegment - minSegmentSum
-    return Math.min(maxSegment, maxAcceptedSegment)
+  const localMaxSlideValue = (() => {
+    const minValueSum = minValue * (dataset.length - 1)
+    const maxAcceptedSlide = maxValue - minValueSum
+    return Math.min(maxValue, maxAcceptedSlide)
   })()
 
-  const sanitizeSegment = (segment) =>
-    Math.max(Math.min(localMaxSegment, segment), minSegment)
+  const sanitizeSlideValue = (slideValue) =>
+    Math.max(Math.min(localMaxSlideValue, slideValue), minValue)
 
-  const getSegmentsFromIndex = (index, clockwise) => {
+  const getSlideFromIndex = (index, clockwise) => {
     if (clockwise) {
       return [
-        ...localSegments.slice(index + 1),
-        ...localSegments.slice(0, index + 1),
+        ...localSlides.slice(index + 1),
+        ...localSlides.slice(0, index + 1),
       ]
     }
     return [
-      ...localSegments.slice(0, index + 1).reverse(),
-      ...localSegments.slice(index + 2).reverse(),
+      ...localSlides.slice(0, index + 1).reverse(),
+      ...localSlides.slice(index + 2).reverse(),
     ]
   }
 
-  const getReducedSegmentIndex = (index, deltaPercent) => {
+  const getReducedSlideIndex = (index, deltaPercent) => {
     const clockwise = deltaPercent > 0
-    const candidates = getSegmentsFromIndex(index, clockwise).filter(
-      (candidateReducibleSegment) => {
+    const candidates = getSlideFromIndex(index, clockwise).filter(
+      (candidateReducibleSlide) => {
         const newPercent =
-          candidateReducibleSegment.value + deltaPercent * (clockwise ? -1 : 1)
-        return newPercent >= minSegment && newPercent <= localMaxSegment
+          candidateReducibleSlide.value + deltaPercent * (clockwise ? -1 : 1)
+        return newPercent >= minValue && newPercent <= localMaxSlideValue
       }
     )
-    const candidate = candidates.find((candidateReducibleSegment) => {
+    const candidate = candidates.find((candidateReducibleSlide) => {
       const newPercent =
-        candidateReducibleSegment.value + deltaPercent * (clockwise ? -1 : 1)
-      return newPercent >= minSegment && newPercent <= localMaxSegment
+        candidateReducibleSlide.value + deltaPercent * (clockwise ? -1 : 1)
+      return newPercent >= minValue && newPercent <= localMaxSlideValue
     })
     return candidate ? candidate.index : null
   }
-  const getAumentedSegmentIndex = (index, deltaPercent) => {
+  const getAumentedSlideIndex = (index, deltaPercent) => {
     const clockwise = deltaPercent > 0
     let candidateIndex = index
     if (!clockwise) {
-      const isLast = index === localSegments.length - 1
+      const isLast = index === localSlides.length - 1
       candidateIndex = isLast ? 0 : index + 1
     }
-    const candidate = localSegments[candidateIndex]
-    if (candidate.value < localMaxSegment) {
+    const candidate = localSlides[candidateIndex]
+    if (candidate.value < localMaxSlideValue) {
       return candidateIndex
     }
     return null
   }
 
-  const updateSegments = (index, deltaSegment) => {
-    const reducedSegmentIndex = getReducedSegmentIndex(index, deltaSegment)
-    const aumentedSegmentIndex = getAumentedSegmentIndex(index, deltaSegment)
+  const updateSlides = (index, deltaSlide) => {
+    const reducedSlideIndex = getReducedSlideIndex(index, deltaSlide)
+    const aumentedSlideIndex = getAumentedSlideIndex(index, deltaSlide)
     onChange(
-      localSegments.map((segment) => {
-        if (segment.index === reducedSegmentIndex) {
+      localSlides.map((slide) => {
+        if (slide.index === reducedSlideIndex) {
           return {
-            ...segment,
-            value: sanitizeSegment(segment.value - Math.abs(deltaSegment)),
+            ...slide,
+            value: sanitizeSlideValue(slide.value - Math.abs(deltaSlide)),
           }
         }
-        if (segment.index === aumentedSegmentIndex) {
+        if (slide.index === aumentedSlideIndex) {
           return {
-            ...segment,
-            value: sanitizeSegment(segment.value + Math.abs(deltaSegment)),
+            ...slide,
+            value: sanitizeSlideValue(slide.value + Math.abs(deltaSlide)),
           }
         }
-        return segment
+        return slide
       })
     )
   }
 
-  const updateOffset = (index, deltaSegment) => {
-    const clockwise = deltaSegment > 0
-    const reducedSegmentIndex = getReducedSegmentIndex(index, deltaSegment)
-    const aumentedSegmentIndex = getAumentedSegmentIndex(index, deltaSegment)
+  const updateOffset = (index, deltaSlide) => {
+    const clockwise = deltaSlide > 0
+    const reducedSlideIndex = getReducedSlideIndex(index, deltaSlide)
+    const aumentedSlideIndex = getAumentedSlideIndex(index, deltaSlide)
     if (
-      isNaN(parseInt(reducedSegmentIndex, 10)) ||
-      isNaN(parseInt(aumentedSegmentIndex, 10))
+      isNaN(parseInt(reducedSlideIndex, 10)) ||
+      isNaN(parseInt(aumentedSlideIndex, 10))
     ) {
-      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
-    } else if (reducedSegmentIndex === aumentedSegmentIndex) {
-      setGlobalOffset(globalOffset - fromPercentToAngle(deltaSegment))
-    } else if (index === localSegments.length - 1) {
+      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
+    } else if (reducedSlideIndex === aumentedSlideIndex) {
+      setGlobalOffset(globalOffset - fromPercentToAngle(deltaSlide))
+    } else if (index === localSlides.length - 1) {
       if (clockwise) {
-        setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
+        setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
       } else {
-        setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
+        setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
       }
-    } else if (reducedSegmentIndex < aumentedSegmentIndex && clockwise) {
-      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
-    } else if (reducedSegmentIndex > aumentedSegmentIndex && !clockwise) {
-      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
-    } else if (aumentedSegmentIndex > reducedSegmentIndex && clockwise) {
-      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSegment))
+    } else if (reducedSlideIndex < aumentedSlideIndex && clockwise) {
+      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
+    } else if (reducedSlideIndex > aumentedSlideIndex && !clockwise) {
+      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
+    } else if (aumentedSlideIndex > reducedSlideIndex && clockwise) {
+      setGlobalOffset(globalOffset + fromPercentToAngle(deltaSlide))
     }
   }
 
   const changePercent = (index, deltaPercent) => {
-    const reducedSegmentIndex = getReducedSegmentIndex(index, deltaPercent)
-    const aumentedSegmentIndex = getAumentedSegmentIndex(index, deltaPercent)
-    const noUpdateSegments =
-      isNaN(parseInt(reducedSegmentIndex, 10)) ||
-      isNaN(parseInt(aumentedSegmentIndex, 10)) ||
-      reducedSegmentIndex === aumentedSegmentIndex
-    if (noUpdateSegments) {
+    const reducedSlideIndex = getReducedSlideIndex(index, deltaPercent)
+    const aumentedSlideIndex = getAumentedSlideIndex(index, deltaPercent)
+    const noUpdateSlides =
+      isNaN(parseInt(reducedSlideIndex, 10)) ||
+      isNaN(parseInt(aumentedSlideIndex, 10)) ||
+      reducedSlideIndex === aumentedSlideIndex
+    if (noUpdateSlides) {
       updateOffset(index, deltaPercent)
     } else {
       updateOffset(index, deltaPercent)
-      updateSegments(index, deltaPercent)
+      updateSlides(index, deltaPercent)
     }
   }
   const handleMouseMove = (event) => {
-    if (selectedSegmentId === null) {
+    event.stopPropagation()
+    event.preventDefault()
+    if (selectedSlideId === null) {
       return
     }
-    const angleIndex = localSegments.findIndex(
-      ({ id }) => id === selectedSegmentId
-    )
-    const angle = localSegments.find(({ id }) => id === selectedSegmentId)
-    const dragLocation = getMouseLocation(event, segmentsRef.current)
+    const angleIndex = localSlides.findIndex(({ id }) => id === selectedSlideId)
+    const angle = localSlides.find(({ id }) => id === selectedSlideId)
+    const dragLocation = getMouseLocation(event, slidesRef.current)
     const dx = dragLocation.x - radio
     const dy = dragLocation.y - radio
     const newPercent = angleToPercent(
@@ -189,65 +199,68 @@ const CircularSlides = ({
     }
   }
 
-  const handleMouseEnterToNode = (segmentId) => {
-    setHoverSegmentId(segmentId)
+  const handleMouseEnterToNode = (slideId) => {
+    setHoverSlideId(slideId)
   }
   const handleMouseLeaveFromNode = () => {
-    setHoverSegmentId(null)
+    setHoverSlideId(null)
   }
 
   const handleMouseDown = (optionId) => {
     if (!disabled) {
-      setSelectedSegmentId(optionId)
+      setSelectedSlideId(optionId)
       onFocus()
     }
   }
 
   const handleMouseUp = () => {
-    if (selectedSegmentId !== null) {
-      setSelectedSegmentId(null)
+    if (selectedSlideId !== null) {
+      setSelectedSlideId(null)
       onBlur()
     }
   }
 
-  const { classNames } = useClassNames({ alias: 'Segments' })
+  const { classNames } = useClassNames({ alias: 'Slides' })
 
   return (
     <div
       className={classNames([{ disabled }, { invert }])}
       onMouseLeave={handleMouseUp}
       onMouseMove={handleMouseMove}
+      onTouchMove={handleMouseMove}
+      onTouchEnd={handleMouseUp}
       onMouseUp={handleMouseUp}
     >
-      <div ref={segmentsRef} radio={radio} className={classNames('segments')}>
+      <div ref={slidesRef} radio={radio} className={classNames('segments')}>
         <div
           className={classNames('rotator')}
           style={{
             transform: `rotate(${globalOffset}rad)`,
           }}
         >
-          {visibleSegments.map((segment) => (
+          {visibleSlides.map((slide) => (
             <div
-              className={classNames('segment', { color: segment.color })}
-              key={segment.id}
-              style={buildSegmentStyles(segment)}
+              className={classNames('segment', { color: slide.color })}
+              key={slide.id}
+              style={buildSlideStyles(slide)}
             />
           ))}
         </div>
         <CircularSliderNodes
           globalOffset={globalOffset}
-          segments={localSegments}
-          selectedSegmentId={selectedSegmentId}
+          slides={localSlides}
+          values={values}
+          selectedSlideId={selectedSlideId}
           onMouseEnter={handleMouseEnterToNode}
           onMouseLeave={handleMouseLeaveFromNode}
           onMouseDown={handleMouseDown}
           invert={invert}
           radio={radio}
         />
-        {selectedSegment && (
+        {selectedSlide && (
           <div className={classNames('centerInfo')}>
-            <div className={classNames('label')}>{selectedSegment.label}</div>
-            <div className={classNames('value')}>{selectedSegment.value}</div>
+            <div className={classNames('label')}>{selectedSlide.label}</div>
+            <div className={classNames('value')}>{selectedSlide.value}</div>
           </div>
         )}
       </div>
@@ -256,9 +269,10 @@ const CircularSlides = ({
 }
 
 CircularSlides.propTypes = {
-  segments: PropTypes.array,
-  minSegment: PropTypes.number,
-  maxSegment: PropTypes.number,
+  dataset: PropTypes.array,
+  values: PropTypes.array,
+  minValue: PropTypes.number,
+  maxValue: PropTypes.number,
   disabled: PropTypes.bool,
   onChange: PropTypes.func,
   onFocus: PropTypes.func,
