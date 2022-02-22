@@ -1,0 +1,18 @@
+.wrapper {
+  padding: 32px;
+  position: fixed;
+  bottom: 0;
+  right: 0;
+}
+
+.text {
+  text-decoration: none;
+  background: -webkit-linear-gradient(
+    0deg,
+    var(--color-cherry) 33%,
+    var(--color-kiwi) 66%,
+    var(--color-blueberry)
+  );
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
