@@ -14,6 +14,8 @@ const CircularSlider = ({
   className,
   invert,
   radio,
+  minSegment,
+  maxSegment,
 }) => {
   const { classNames } = useClassNames({ alias: 'SegmentsFieldset' })
 
@@ -50,6 +52,8 @@ const CircularSlider = ({
         onChange={handleChange}
         onFocus={onFocus}
         onBlur={onBlur}
+        maxSegment={maxSegment}
+        minSegment={minSegment}
       />
       <Segments
         invert={invert}
@@ -59,7 +63,8 @@ const CircularSlider = ({
         onFocus={onFocus}
         onBlur={onBlur}
         onChange={handleChange}
-        maxSegment={100}
+        maxSegment={maxSegment}
+        minSegment={minSegment}
       />
     </div>
   )
@@ -75,6 +80,8 @@ CircularSlider.propTypes = {
   className: PropTypes.string,
   radio: PropTypes.number,
   invert: PropTypes.bool,
+  minSegment: PropTypes.number,
+  maxSegment: PropTypes.number,
 }
 
 CircularSlider.defaultProps = {

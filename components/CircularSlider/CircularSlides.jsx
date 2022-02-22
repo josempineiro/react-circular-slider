@@ -18,8 +18,8 @@ const CircularSlides = ({
   onFocus,
   onBlur,
   segments,
-  minSegment = 5,
-  maxSegment = 100,
+  minSegment,
+  maxSegment,
   disabled,
   radio,
   invert,
@@ -55,7 +55,7 @@ const CircularSlides = ({
 
   const localMaxSegment = (() => {
     const minSegmentSum = minSegment * (segments.length - 1)
-    const maxAcceptedSegment = 100 - minSegmentSum
+    const maxAcceptedSegment = maxSegment - minSegmentSum
     return Math.min(maxSegment, maxAcceptedSegment)
   })()
 

@@ -7,9 +7,9 @@ import CircularSlider from 'components/CircularSlider'
 
 export default function Home() {
   const [values, setValues] = useState([
-    { id: '1', label: 'label1', value: 10 },
-    { id: '2', label: 'label2', value: 10 },
-    { id: '3', label: 'label3', value: 80 },
+    { id: '1', label: 'label1', value: 10, color: 'cherry' },
+    { id: '2', label: 'label2', value: 10, color: 'kiwi' },
+    { id: '3', label: 'label3', value: 80, color: 'blueberry' },
   ])
   const onChange = (newValue) => {
     setValues((values) =>
@@ -33,6 +33,8 @@ export default function Home() {
           segments={values}
           radio={122}
           onChange={onChange}
+          maxSegment={100}
+          minSegment={5}
         />
       </main>
 

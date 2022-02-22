@@ -42,7 +42,7 @@ a {
 
 .Segments_label,
 .Segments_value {
-  color: white;
+  color: black;
 }
 
 .Segments_label {
@@ -151,7 +151,7 @@ a {
 .SegmentsFieldset___invert .SegmentsControls_segmentLabel,
 .SegmentsFieldset___invert .SegmentsControls_input,
 .SegmentsFieldset___invert .SegmentsNodes_nodeInfo {
-  color: white;
+  color: black;
 }
 
 .Segments_segment___cherry,
@@ -182,7 +182,8 @@ a {
 .SegmentsNodes_node___grape {
   border-color: #835177;
 }
-.Segments_segment___watermelon .SegmentsNodes_node___watermelon {
+.Segments_segment___watermelon,
+.SegmentsNodes_node___watermelon {
   border-color: #e37383;
 }
 

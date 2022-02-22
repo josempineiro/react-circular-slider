@@ -165,7 +165,8 @@
 .SegmentsNodes_node___grape {
   border-color: #835177;
 }
-.Segments_segment___watermelon .SegmentsNodes_node___watermelon {
+.Segments_segment___watermelon,
+.SegmentsNodes_node___watermelon {
   border-color: #e37383;
 }
 

@@ -5,7 +5,15 @@ import { useClassNames } from 'hooks'
 const areValidSegments = (segments) =>
   segments.reduce((sum, { value }) => value + sum, 0) === 100
 
-const PercetageInput = ({ value, onChange, onFocus, onBlur, ...rest }) => {
+const PercetageInput = ({
+  value,
+  onChange,
+  onFocus,
+  onBlur,
+  maxSegment,
+  minSegment,
+  ...rest
+}) => {
   const [focused, setFocused] = useState(false)
   const handleFocus = () => {
     setFocused(true)
@@ -22,8 +30,8 @@ const PercetageInput = ({ value, onChange, onFocus, onBlur, ...rest }) => {
       onFocus={handleFocus}
       onBlur={handleBlur}
       onChange={onChange}
-      max={100}
-      min={0}
+      max={maxSegment}
+      min={minSegment}
       {...rest}
     />
   )
@@ -49,6 +57,8 @@ const SegmentsControls = ({
   onFocus,
   label,
   onBlur,
+  maxSegment,
+  minSegment,
 }) => {
   const [localSegments, setLocalSegments] = useState(null)
   useEffect(() => {
@@ -188,6 +198,8 @@ SegmentsControls.propTypes = {
   autoIncrement: PropTypes.number,
   disabled: PropTypes.bool,
   label: PropTypes.node,
+  minSegment: PropTypes.number,
+  maxSegment: PropTypes.number,
 }
 
 SegmentsControls.defaultProps = {
