@@ -16,7 +16,12 @@ const Socials = () => {
       <ul className={styles.list}>
         {socials.map((social) => (
           <li key={social.href} className={styles.item}>
-            <a href={social.href} title={social.icon} target="_blank">
+            <a
+              href={social.href}
+              title={social.icon}
+              target="_blank"
+              rel="noreferrer"
+            >
               <Icon name={social.icon} />
             </a>
           </li>
