@@ -179,7 +179,6 @@ const CircularSlides = ({
   }
   const handleMouseMove = (event) => {
     event.stopPropagation()
-    event.preventDefault()
     if (selectedSlideId === null) {
       return
     }
