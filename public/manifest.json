@@ -1,0 +1,17 @@
+{
+  "author": "José Manuel Piñeiro García",
+  "developer": {
+    "name": "José Manuel Piñeiro García",
+    "url": "https://www.linkedin.com/in/josempineiro/"
+  },
+  "short_name": "Circular Slider",
+  "name": "Crazy Circular Slider",
+  "description": "Crazy Circular Slider built with React",
+  "display": "minimal-ui",
+  "icons": [
+    {
+      "src": "/circular-slider.svg",
+      "sizes": "48x48 72x72 96x96 128x128 256x256"
+    }
+  ]
+}
