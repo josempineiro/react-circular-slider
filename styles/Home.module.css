@@ -1,9 +1,10 @@
 .container {
   padding: 0 2rem;
+  height: 100%;
 }
 
 .main {
-  min-height: 100vh;
+  min-height: 100%;
   padding: 4rem 0;
   flex: 1;
   display: flex;
@@ -11,7 +12,6 @@
   justify-content: center;
   align-items: center;
 }
-
 .footer {
   display: flex;
   flex: 1;
@@ -28,9 +28,26 @@
   flex-grow: 1;
 }
 
-.title a {
-  color: #0070f3;
+.title {
   text-decoration: none;
+  background: linear-gradient(
+    90deg,
+    var(--color-cherry) var(--cherry-percent),
+    var(--color-kiwi) var(--kiwi-percent),
+    var(--color-blueberry) var(--blueberry-percent)
+  );
+  background: linear-gradient(
+    90deg,
+    var(--color-cherry) 0%,
+    var(--color-cherry) calc(var(--cherry-percent) - 2.5%),
+    var(--color-kiwi) calc(var(--cherry-percent) + 2.5%),
+    var(--color-kiwi) calc(var(--cherry-percent) + var(--kiwi-percent) - 2.5%),
+    var(--color-blueberry)
+      calc(var(--cherry-percent) + var(--kiwi-percent) + 2.5%),
+    var(--color-blueberry) 100%
+  );
+  background-clip: text;
+  -webkit-text-fill-color: transparent;
 }
 
 .title a:hover,
@@ -42,7 +59,7 @@
 .title {
   margin: 0;
   line-height: 1.15;
-  font-size: 4rem;
+  font-size: 2rem;
 }
 
 .title,

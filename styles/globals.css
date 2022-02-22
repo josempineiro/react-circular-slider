@@ -5,6 +5,19 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Oxygen,
     Ubuntu, Cantarell, Fira Sans, Droid Sans, Helvetica Neue, sans-serif;
 }
+html {
+  height: -webkit-fill-available;
+}
+body {
+  min-height: 100vh;
+  min-height: -webkit-fill-available;
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+#__next {
+  height: 100%;
+}
 
 a {
   color: inherit;
@@ -15,22 +28,45 @@ a {
   box-sizing: border-box;
 }
 
-.SegmentsFieldset {
+ul {
+  padding: 0;
+  margin: 0;
+}
+
+ul,
+li {
+  list-style: none;
+}
+
+:root {
+  --color-cherry: #fd5973;
+  --color-apricot: #f8b878;
+  --color-kiwi: #8ee53f;
+  --color-mint: #98ff98;
+  --color-water: #26baee;
+  --color-blueberry: #4f86f7;
+  --color-grape: #835177;
+  --color-watermelon: #e37383;
+}
+
+.SlidesFieldset {
   display: flex;
   margin: 32px 0;
   align-items: center;
+  flex-direction: column;
 }
 
-.Segments {
-  padding: 24px;
+.Slides {
+  padding: 56px;
   user-select: none;
+  touch-action: none;
 }
 
-.Segments_rotator {
+.Slides_rotator {
   width: 100%;
   height: 100%;
 }
-.Segments_segment {
+.Slides_segment {
   width: 100%;
   height: 100%;
   border-radius: 50%;
@@ -40,23 +76,23 @@ a {
   border-style: solid;
 }
 
-.Segments_label,
-.Segments_value {
+.Slides_label,
+.Slides_value {
   color: black;
 }
 
-.Segments_label {
+.Slides_label {
   font-size: 1rem;
 }
 
-.Segments_value {
+.Slides_value {
   font-size: 3rem;
   font-size: 56px;
   line-height: 72px;
   font-weight: 100;
 }
 
-.Segments_centerInfo {
+.Slides_centerInfo {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -64,17 +100,17 @@ a {
   text-align: center;
 }
 
-.Segments_segments {
+.Slides_segments {
   width: 244px;
   height: 244px;
   position: relative;
 }
 
 /************************/
-/* Segment controls *****/
+/* Slide controls *****/
 /************************/
 
-.SegmentsControls {
+.SlidesControls {
   display: flex;
   flex-direction: column;
   margin-right: 56px;
@@ -82,11 +118,11 @@ a {
   padding-bottom: 32px;
 }
 
-.SegmentsControls .sw-switch {
+.SlidesControls .sw-switch {
   background: transparent;
 }
 
-.SegmentsControls_input {
+.SlidesControls_input {
   width: 56px;
   min-width: 56px;
   max-width: 56px;
@@ -101,7 +137,7 @@ a {
   font-size: 1rem;
 }
 
-.SegmentsControls_input::after {
+.SlidesControls_input::after {
   content: '';
   position: absolute;
   top: 0;
@@ -110,84 +146,92 @@ a {
   height: 5px;
 }
 
-.SegmentsControls_label {
+.SlidesControls_label {
   font-size: 1rem;
   color: black;
   margin: 0;
   margin-bottom: 16px;
 }
 
-.SegmentsControls_segmentLabel {
+.SlidesControls_segmentLabel {
   font-size: 1rem;
   flex-basis: 120px;
 }
 
-.SegmentsControls_units {
+.SlidesControls_units {
   font-size: 1rem;
 }
-.SegmentsControls_segment {
+.SlidesControls_segment {
   display: flex;
   align-items: center;
   justify-content: space-between;
 }
-.SegmentsControls_segment + .SegmentsControls_segment {
+.SlidesControls_segment + .SlidesControls_segment {
   margin-top: 32px;
 }
-.SegmentsControls_segment > * + * {
+.SlidesControls_segment > * + * {
   margin-left: 32px;
 }
-.SegmentsControls_segment___disabled {
+.SlidesControls_segment___disabled {
   opacity: 0.4;
   pointer-events: none;
 }
 
-.Segments___disabled {
+.Slides___disabled {
   opacity: 0.4;
 }
 
-.SegmentsFieldset___invert .Segments_label,
-.SegmentsFieldset___invert .Segments_value,
-.SegmentsFieldset___invert .SegmentsControls_units,
-.SegmentsFieldset___invert .SegmentsControls_segmentLabel,
-.SegmentsFieldset___invert .SegmentsControls_input,
-.SegmentsFieldset___invert .SegmentsNodes_nodeInfo {
+.SlidesFieldset___invert .Slides_label,
+.SlidesFieldset___invert .Slides_value,
+.SlidesFieldset___invert .SlidesControls_units,
+.SlidesFieldset___invert .SlidesControls_segmentLabel,
+.SlidesFieldset___invert .SlidesControls_input,
+.SlidesFieldset___invert .SlidesNodes_nodeInfo {
   color: black;
 }
 
-.Segments_segment___cherry,
-.SegmentsNodes_node___cherry {
+.Slides_segment___cherry,
+.SlidesNodes_node___cherry {
+  color: #fd5973;
   border-color: #fd5973;
 }
-.Segments_segment___apricot,
-.SegmentsNodes_node___apricot {
+.Slides_segment___apricot,
+.SlidesNodes_node___apricot {
+  color: #f8b878;
   border-color: #f8b878;
 }
-.Segments_segment___kiwi,
-.SegmentsNodes_node___kiwi {
+.Slides_segment___kiwi,
+.SlidesNodes_node___kiwi {
+  color: #8ee53f;
   border-color: #8ee53f;
 }
-.Segments_segment___mint,
-.SegmentsNodes_node___mint {
+.Slides_segment___mint,
+.SlidesNodes_node___mint {
+  color: #98ff98;
   border-color: #98ff98;
 }
-.Segments_segment___water,
-.SegmentsNodes_node___water {
+.Slides_segment___water,
+.SlidesNodes_node___water {
+  color: #26baee;
   border-color: #26baee;
 }
-.Segments_segment___blueberry,
-.SegmentsNodes_node___blueberry {
+.Slides_segment___blueberry,
+.SlidesNodes_node___blueberry {
+  color: #4f86f7;
   border-color: #4f86f7;
 }
-.Segments_segment___grape,
-.SegmentsNodes_node___grape {
+.Slides_segment___grape,
+.SlidesNodes_node___grape {
+  color: #835177;
   border-color: #835177;
 }
-.Segments_segment___watermelon,
-.SegmentsNodes_node___watermelon {
+.Slides_segment___watermelon,
+.SlidesNodes_node___watermelon {
+  border: #e37383;
   border-color: #e37383;
 }
 
-.SegmentsNodes {
+.SlidesNodes {
   position: absolute;
   top: 50%;
   left: 50%;
@@ -195,30 +239,45 @@ a {
   height: 0;
 }
 
-.SegmentsNodes_node {
+.SlidesNodes_node {
   box-sizing: border-box;
-  width: 12px;
-  height: 12px;
+  width: 32px;
+  height: 32px;
   border-radius: 50%;
   position: absolute;
-  background-color: white;
   cursor: pointer;
   box-sizing: border-box;
-  border-style: solid;
-  border-width: 2px;
   z-index: 10;
   transform: translate(-50%, -50%);
 }
 
-.SegmentsNodes_nodes {
+.SlidesNodes_node::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate3d(-50%, -50%, 0);
+  width: 16px;
+  height: 16px;
+  background-color: white;
+  box-sizing: border-box;
+  border-radius: 50%;
+  box-sizing: border-box;
+  border-style: solid;
+  border-width: 2px;
+  cursor: pointer;
+  z-index: 10;
+}
+
+.SlidesNodes_nodes {
   position: relative;
 }
 
-.SegmentsNodes_node___selected {
+.SlidesNodes_node___selected {
   transform: translate(-50%, -50%) scale(1.5);
 }
 
-.SegmentsNodes_nodeInfo {
+.SlidesNodes_nodeInfo {
   position: absolute;
   top: 50%;
   left: 50%;
