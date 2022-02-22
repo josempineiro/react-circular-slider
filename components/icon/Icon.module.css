@@ -1,0 +1,12 @@
+.icon {
+  display: inline-flex;
+  width: 32px;
+  height: 32px;
+}
+
+.LinkedIn {
+  color: #0e76a8;
+}
+.Github {
+  color: #333;
+}
